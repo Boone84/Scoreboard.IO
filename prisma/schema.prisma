@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// npx prisma migrate dev --name " " run this when adding or changing schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id        Int      @id @default(autoincrement())
+  name      String
+  location  String
+  players   Player[]
+  homeGames Game[]   @relation("HomeTeam")
+  awayGames Game[]   @relation("AwayTeam")
+}
+
+model Player {
+  id       Int     @id @default(autoincrement())
+  name     String
+  position String
+  teamId   Int
+  team     Team    @relation(fields: [teamId], references: [id])
+  stats    Stats[]
+}
+
+model Game {
+  id         Int      @id @default(autoincrement())
+  date       DateTime
+  location   String
+  homeTeamId Int
+  awayTeamId Int
+  homeTeam   Team     @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam   Team     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  stats      Stats[]
+}
+
+model Stats {
+  id       Int    @id @default(autoincrement())
+  playerId Int
+  gameId   Int
+  player   Player @relation(fields: [playerId], references: [id])
+  game     Game   @relation(fields: [gameId], references: [id])
+  runs     Int
+  hits     Int
+}
