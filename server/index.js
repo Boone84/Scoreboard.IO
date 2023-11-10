@@ -8,6 +8,10 @@ app.get(`/`, (req, res) =>{
     res.send(`hello world`);
 });
 
+app.use("/api", require("./api"));
+
+
+
 app.listen(PORT, (err) => {
     if(!err){
         console.log(`listening on port ${PORT}`);
